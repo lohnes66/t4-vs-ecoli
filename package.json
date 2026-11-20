@@ -1,0 +1,24 @@
+{
+  "name": "t4-vs-ecoli-lab",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Виртуальная лаборатория «T4 vs E. coli»",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "validate": "vitest run tests/validation.test.ts"
+  },
+  "dependencies": {
+    "pixi.js": "^8.22.0",
+    "uplot": "^1.6.32"
+  },
+  "devDependencies": {
+    "typescript": "~5.9",
+    "vite": "^8.3.6",
+    "vite-plugin-singlefile": "^2.3.4",
+    "vitest": "^4.1.12"
+  }
+}

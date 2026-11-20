@@ -1,0 +1,216 @@
+{
+  "preset": {
+    "id": "t4-wt",
+    "name": "T4 дикого типа",
+    "description": "E. coli K-12 и фаг T4 при 37 °C в богатой среде. Стартовый набор значений; перед сдачей работы каждое значение сверить с указанными источниками."
+  },
+  "groups": [
+    { "id": "host", "name": "Хозяин: E. coli K-12" },
+    { "id": "phage", "name": "Фаг T4: цикл развития" },
+    { "id": "li", "name": "Торможение лизиса и исключение суперинфекции" },
+    { "id": "physiology", "name": "Физиология хозяина и температура" },
+    { "id": "colony", "name": "Колония и диффузия (микроскоп, чашка)" },
+    { "id": "measure", "name": "Измерения" },
+    { "id": "extra", "name": "Дополнительно" }
+  ],
+  "parameters": [
+    {
+      "id": "doublingTime", "group": "host", "label": "Время удвоения", "symbol": "t_d", "unit": "мин",
+      "value": 20, "min": 15, "max": 120, "step": 0.5, "scale": "linear",
+      "range": "17–30 мин в LB при 37 °C",
+      "description": "Время удвоения популяции в экспоненциальной фазе при избытке питания и 37 °C. Максимальная удельная скорость роста μ_max = ln2 / t_d.",
+      "sources": ["Sezonov G., Joseleau-Petit D., D'Ari R. Escherichia coli physiology in Luria-Bertani broth. J Bacteriol. 2007;189:8746–8749.", "Neidhardt F.C., Ingraham J.L., Schaechter M. Physiology of the Bacterial Cell. Sinauer, 1990."]
+    },
+    {
+      "id": "monodKs", "group": "host", "label": "Константа Моно по глюкозе", "symbol": "K_s", "unit": "мкМ",
+      "value": 1, "min": 0.05, "max": 100, "step": 0.01, "scale": "log",
+      "range": "0,3–5 мкМ (хемостат); старые оценки — до 20 мкМ",
+      "description": "Концентрация субстрата, при которой скорость роста равна половине максимальной (уравнение Моно μ = μ_max·N / (K_s + N)).",
+      "sources": ["Monod J. The growth of bacterial cultures. Annu Rev Microbiol. 1949;3:371–394.", "Senn H., Lendenmann U., Snozzi M., Hamer G., Egli T. The growth of Escherichia coli in glucose-limited chemostat cultures: a re-examination of the kinetics. Biochim Biophys Acta. 1994;1201:424–436."]
+    },
+    {
+      "id": "yield", "group": "host", "label": "Выход биомассы", "symbol": "Y", "unit": "клеток/мкмоль",
+      "value": 1e9, "min": 1e8, "max": 5e9, "step": 0, "scale": "log",
+      "range": "≈3·10⁸–10⁹ клеток на мкмоль глюкозы",
+      "description": "Сколько клеток образуется при потреблении 1 мкмоль глюкозы. Оценка по выходу ≈0,5 г сухой массы на г глюкозы и массе клетки ≈0,3 пг даёт ≈3·10⁸ — значение пресета стоит сверить.",
+      "sources": ["Neidhardt F.C., Ingraham J.L., Schaechter M. Physiology of the Bacterial Cell. Sinauer, 1990."]
+    },
+    {
+      "id": "resistanceMutationRate", "group": "host", "label": "Частота мутаций устойчивости (OmpC⁻)", "symbol": "μ_res", "unit": "на клетку за поколение",
+      "value": 1e-6, "min": 1e-9, "max": 1e-4, "step": 0, "scale": "log",
+      "range": "10⁻⁸–10⁻⁶",
+      "description": "Вероятность того, что при делении чувствительной клетки возникнет мутант, на который фаг не адсорбируется. Мутанты возникают случайно, независимо от присутствия фага (опыт Луриа — Дельбрюка).",
+      "sources": ["Luria S.E., Delbrück M. Mutations of bacteria from virus sensitivity to virus resistance. Genetics. 1943;28:491–511.", "Lenski R.E. Experimental studies of pleiotropy and epistasis in Escherichia coli. I. Variation in competitive fitness among mutants resistant to virus T4. Evolution. 1988;42:425–432."]
+    },
+    {
+      "id": "resistanceCost", "group": "host", "label": "Плата за устойчивость", "symbol": "c", "unit": "%",
+      "value": 5, "min": 0, "max": 50, "step": 0.5, "scale": "linear",
+      "range": "0–40 %, у большинства мутантов — единицы процентов и выше",
+      "description": "Насколько устойчивый мутант растёт медленнее чувствительной клетки. Без платы модель переоценивает скорость распространения устойчивости.",
+      "sources": ["Lenski R.E. Experimental studies of pleiotropy and epistasis in Escherichia coli. I. Evolution. 1988;42:425–432."]
+    },
+    {
+      "id": "resistantAdsorption", "group": "host", "label": "Адсорбция фага на устойчивые клетки", "symbol": "α_R", "unit": "% от нормы",
+      "value": 0, "min": 0, "max": 100, "step": 1, "scale": "linear",
+      "range": "0 % при потере рецептора",
+      "description": "Доля от обычной скорости адсорбции, с которой фаг садится на устойчивую клетку. Заражения при этом не происходит, но фаг теряется. 0 % — рецептор утрачен, фаг не адсорбируется совсем.",
+      "sources": ["Kutter E., Sulakvelidze A. (eds.) Bacteriophages: Biology and Applications. CRC Press, 2005."]
+    },
+    {
+      "id": "latentPeriod", "group": "phage", "label": "Латентный период", "symbol": "L", "unit": "мин",
+      "value": 24.5, "min": 15, "max": 60, "step": 0.5, "scale": "linear",
+      "range": "22–25 мин при 37 °C в богатой среде",
+      "description": "Среднее время от заражения до лизиса клетки в растущей культуре. На кривой одиночного цикла подъём титра начинается на 1–2 мин раньше — за счёт разброса времени лизиса. В модели это фиксированная задержка (заражённые клетки хранятся когортами по возрасту), а не случайный процесс с постоянной вероятностью.",
+      "sources": ["Ellis E.L., Delbrück M. The growth of bacteriophage. J Gen Physiol. 1939;22:365–384.", "Abedon S.T., Herschler T.D., Stopar D. Bacteriophage latent-period evolution as a response to resource availability. Appl Environ Microbiol. 2001;67:4233–4241.", "Miller E.S. et al. Bacteriophage T4 genome. Microbiol Mol Biol Rev. 2003;67:86–156."]
+    },
+    {
+      "id": "lysisSpread", "group": "phage", "label": "Разброс времени лизиса", "symbol": "σ_L", "unit": "мин",
+      "value": 1.0, "min": 0, "max": 5, "step": 0.1, "scale": "linear",
+      "range": "≈1–2 мин",
+      "description": "Стандартное отклонение момента лизиса вокруг латентного периода. Определяет крутизну ступеньки на кривой одиночного цикла роста.",
+      "sources": ["Ellis E.L., Delbrück M. The growth of bacteriophage. J Gen Physiol. 1939;22:365–384."]
+    },
+    {
+      "id": "eclipsePeriod", "group": "phage", "label": "Эклипс-период", "symbol": "E", "unit": "мин",
+      "value": 12, "min": 5, "max": 30, "step": 0.5, "scale": "linear",
+      "range": "≈12 мин",
+      "description": "Время после заражения, в течение которого внутри клетки ещё нет зрелых фаговых частиц. После эклипса частицы накапливаются примерно линейно до лизиса.",
+      "sources": ["Doermann A.H. The intracellular growth of bacteriophages. I. Liberation of intracellular bacteriophage T4 by premature lysis with another phage or with cyanide. J Gen Physiol. 1952;35:645–656."]
+    },
+    {
+      "id": "burstSize", "group": "phage", "label": "Размер урожая", "symbol": "B", "unit": "частиц на клетку",
+      "value": 150, "min": 10, "max": 500, "step": 1, "scale": "linear",
+      "range": "100–200",
+      "description": "Число фаговых частиц, освобождающихся при лизисе одной клетки без торможения лизиса в растущей культуре.",
+      "sources": ["Hadas H., Einav M., Fishov I., Zaritsky A. Bacteriophage T4 development depends on the physiology of its host Escherichia coli. Microbiology. 1997;143:179–185.", "Kutter E., Sulakvelidze A. (eds.) Bacteriophages: Biology and Applications. CRC Press, 2005."]
+    },
+    {
+      "id": "adsorptionRate", "group": "phage", "label": "Константа адсорбции", "symbol": "k", "unit": "мл/мин",
+      "value": 1e-9, "min": 1e-11, "max": 1e-8, "step": 0, "scale": "log",
+      "range": "10⁻⁹–5·10⁻⁹ мл/мин",
+      "description": "Скорость встречи фага с клеткой: за минуту одна клетка поглощает k·P фагов, где P — концентрация свободного фага в мл.",
+      "sources": ["Adams M.H. Bacteriophages. Interscience, 1959.", "Kutter E., Sulakvelidze A. (eds.) Bacteriophages: Biology and Applications. CRC Press, 2005."]
+    },
+    {
+      "id": "decayRate", "group": "phage", "label": "Распад свободных фагов", "symbol": "δ", "unit": "1/ч",
+      "value": 0.01, "min": 0, "max": 1, "step": 0.001, "scale": "linear",
+      "range": "≈0,001–0,05 1/ч для T4 в среде",
+      "description": "Доля свободных фагов, теряющих инфекционность за час.",
+      "sources": ["De Paepe M., Taddei F. Viruses' life history: towards a mechanistic basis of a trade-off between survival and reproduction among phages. PLoS Biol. 2006;4:e193."]
+    },
+    {
+      "id": "rMutationRate", "group": "phage", "label": "Частота мутаций r (rI/rII)", "symbol": "μ_r", "unit": "на частицу потомства",
+      "value": 1e-4, "min": 1e-6, "max": 1e-2, "step": 0, "scale": "log",
+      "range": "10⁻⁴–10⁻³ (доля r-мутантов в стоке)",
+      "description": "Вероятность того, что новая частица потомства фага дикого типа окажется r-мутантом. r-мутанты не умеют тормозить лизис и дают крупные бляшки с резким краем.",
+      "sources": ["Benzer S. Fine structure of a genetic region in bacteriophage. Proc Natl Acad Sci USA. 1955;41:344–354.", "Miller E.S. et al. Bacteriophage T4 genome. Microbiol Mol Biol Rev. 2003;67:86–156."]
+    },
+    {
+      "id": "maxBurstLI", "group": "li", "label": "Макс. урожай при торможении лизиса", "symbol": "B_max", "unit": "частиц на клетку",
+      "value": 1000, "min": 150, "max": 3000, "step": 10, "scale": "linear",
+      "range": "до ≈1000",
+      "description": "Предельное число частиц в клетке с заторможенным лизисом. Пока лизис заторможен, частицы продолжают накапливаться с той же скоростью, что и в обычном цикле.",
+      "sources": ["Doermann A.H. Lysis and lysis inhibition with Escherichia coli bacteriophage. J Bacteriol. 1948;55:257–276.", "Abedon S.T. Lysis of lysis-inhibited bacteriophage T4-infected cells. J Bacteriol. 1992;174:8073–8080."]
+    },
+    {
+      "id": "liWindow", "group": "li", "label": "Окно поддержания торможения", "symbol": "τ_LI", "unit": "мин",
+      "value": 10, "min": 1, "max": 60, "step": 0.5, "scale": "linear",
+      "range": "оценка; минуты",
+      "description": "Торможение лизиса держится, пока клетку продолжают атаковать новые фаги. Если за время τ_LI ни один фаг не адсорбировался, торможение «срывается» и клетка лизируется. Вероятность срыва за минуту = exp(−k·P·τ_LI) / τ_LI.",
+      "sources": ["Abedon S.T. Lysis of lysis-inhibited bacteriophage T4-infected cells. J Bacteriol. 1992;174:8073–8080."]
+    },
+    {
+      "id": "liMaxDuration", "group": "li", "label": "Макс. длительность торможения", "symbol": "T_LI", "unit": "мин",
+      "value": 90, "min": 15, "max": 600, "step": 5, "scale": "linear",
+      "range": "от десятков минут до нескольких часов; оценка, сверить",
+      "description": "Сколько времени после обычного момента лизиса клетка может оставаться заторможенной даже при постоянной суперинфекции.",
+      "sources": ["Doermann A.H. Lysis and lysis inhibition with Escherichia coli bacteriophage. J Bacteriol. 1948;55:257–276."]
+    },
+    {
+      "id": "sieTime", "group": "li", "label": "Время установления исключения суперинфекции", "symbol": "t_SIE", "unit": "мин",
+      "value": 4, "min": 0.5, "max": 10, "step": 0.5, "scale": "linear",
+      "range": "≈2–5 мин",
+      "description": "Через это время после заражения клетка перестаёт впускать ДНК новых фагов. Адсорбция повторных фагов после этого момента запускает торможение лизиса (у фага дикого типа).",
+      "sources": ["Lu M.-J., Henning U. Superinfection exclusion by T-even-type coliphages. Trends Microbiol. 1994;2:137–139.", "Abedon S.T. Lysis of lysis-inhibited bacteriophage T4-infected cells. J Bacteriol. 1992;174:8073–8080."]
+    },
+    {
+      "id": "starvedDevelopmentRate", "group": "physiology", "label": "Скорость развития фага в голодающей клетке", "symbol": "ρ_min", "unit": "% от нормы",
+      "value": 15, "min": 1, "max": 100, "step": 1, "scale": "linear",
+      "range": "оценка; в стационарной фазе латентный период растёт в разы",
+      "description": "Во сколько раз медленнее проходит цикл развития фага в клетке, не получающей питания. Между голодом и полным питанием скорость меняется пропорционально скорости роста хозяина.",
+      "sources": ["Hadas H., Einav M., Fishov I., Zaritsky A. Bacteriophage T4 development depends on the physiology of its host Escherichia coli. Microbiology. 1997;143:179–185.", "Bryan D., El-Shibiny A., Hobbs Z., Porter J., Kutter E.M. Bacteriophage T4 infection of stationary phase E. coli: life after log from a phage perspective. Front Microbiol. 2016;7:1391."]
+    },
+    {
+      "id": "starvedBurst", "group": "physiology", "label": "Урожай в голодающей клетке", "symbol": "β_min", "unit": "% от нормы",
+      "value": 5, "min": 0, "max": 100, "step": 1, "scale": "linear",
+      "range": "оценка; единицы процентов",
+      "description": "Какая доля обычного урожая образуется в клетке, не получающей питания.",
+      "sources": ["Hadas H., Einav M., Fishov I., Zaritsky A. Bacteriophage T4 development depends on the physiology of its host Escherichia coli. Microbiology. 1997;143:179–185."]
+    },
+    {
+      "id": "q10", "group": "physiology", "label": "Температурный коэффициент", "symbol": "Q₁₀", "unit": "",
+      "value": 2, "min": 1.2, "max": 3.5, "step": 0.1, "scale": "linear",
+      "range": "≈2 для ферментативных процессов",
+      "description": "Во сколько раз ускоряются рост бактерий и развитие фага при повышении температуры на 10 °C. Все скорости модели пересчитываются от 37 °C.",
+      "sources": ["Ratkowsky D.A., Olley J., McMeekin T.A., Ball A. Relationship between temperature and growth rate of bacterial cultures. J Bacteriol. 1982;149:1–5."]
+    },
+    {
+      "id": "cellWidth", "group": "colony", "label": "Ширина клетки", "symbol": "d", "unit": "мкм",
+      "value": 1.0, "min": 0.6, "max": 1.5, "step": 0.05, "scale": "linear",
+      "range": "≈1 мкм",
+      "description": "Диаметр палочки E. coli. Клетка моделируется капсулой — отрезком со скруглёнными концами.",
+      "sources": ["Neidhardt F.C., Ingraham J.L., Schaechter M. Physiology of the Bacterial Cell. Sinauer, 1990."]
+    },
+    {
+      "id": "divisionLength", "group": "colony", "label": "Длина клетки перед делением", "symbol": "ℓ_div", "unit": "мкм",
+      "value": 4.0, "min": 2.5, "max": 6, "step": 0.1, "scale": "linear",
+      "range": "2–4 мкм в быстро растущей культуре",
+      "description": "Клетка удлиняется и, достигнув этой длины (с разбросом ±10 %), делится пополам.",
+      "sources": ["Neidhardt F.C., Ingraham J.L., Schaechter M. Physiology of the Bacterial Cell. Sinauer, 1990."]
+    },
+    {
+      "id": "phageDiffusion", "group": "colony", "label": "Коэффициент диффузии фага в агаре", "symbol": "D_p", "unit": "см²/с",
+      "value": 1e-8, "min": 1e-10, "max": 1e-7, "step": 0, "scale": "log",
+      "range": "≈10⁻⁸ см²/с в мягком агаре; ≈4·10⁻⁸ в воде",
+      "description": "Как быстро свободные фаги расползаются в агаре. Только фаг подвижен: бактерии в мягком агаре почти не двигаются и растут на месте.",
+      "sources": ["Abedon S.T., Yin J. Bacteriophage plaques: theory and analysis. Methods Mol Biol. 2009;501:161–174.", "Kutter E., Sulakvelidze A. (eds.) Bacteriophages: Biology and Applications. CRC Press, 2005."]
+    },
+    {
+      "id": "odPerCell", "group": "measure", "label": "Клеток в 1 ед. OD₆₀₀", "symbol": "—", "unit": "клеток/мл",
+      "value": 8e8, "min": 1e8, "max": 5e9, "step": 0, "scale": "log",
+      "range": "(5–10)·10⁸; зависит от прибора",
+      "description": "Пересчёт плотности клеток в оптическую плотность при 600 нм.",
+      "sources": ["Myers J.A., Curtis B.S., Curtis W.R. Improving accuracy of cell and chromophore concentration measurements using optical density. BMC Biophys. 2013;6:4."]
+    },
+    {
+      "id": "ghostOd", "group": "measure", "label": "Мутность от обломков лизиса", "symbol": "—", "unit": "% от клетки",
+      "value": 10, "min": 0, "max": 50, "step": 1, "scale": "linear",
+      "range": "оценка",
+      "description": "Насколько сильно рассеивает свет оболочка лизированной клетки по сравнению с целой клеткой. Отвечает за остаточную мутность лизата.",
+      "sources": ["Оценка разработчиков модели; сверить с собственными кривыми лизиса из литературы."]
+    },
+    {
+      "id": "stochasticThreshold", "group": "extra", "label": "Порог случайного режима", "symbol": "—", "unit": "частиц",
+      "value": 1000, "min": 10, "max": 100000, "step": 0, "scale": "log",
+      "range": "≈1000",
+      "description": "Если число клеток или фагов какого-то типа во всей культуре меньше порога, модель разыгрывает каждое событие (деление, заражение, мутацию, лизис) случайным образом вместо расчёта средних. Это нужно для честного появления редких мутантов.",
+      "sources": ["Gillespie D.T. Exact stochastic simulation of coupled chemical reactions. J Phys Chem. 1977;81:2340–2361."]
+    }
+  ],
+  "mechanisms": [
+    { "id": "lysisInhibition", "label": "Торможение лизиса", "value": true,
+      "description": "Повторная адсорбция фага на заражённую клетку задерживает её лизис и увеличивает урожай (только у фага дикого типа). Выключение превращает дикий тип в r-подобный фаг." },
+    { "id": "superinfectionExclusion", "label": "Исключение суперинфекции", "value": true,
+      "description": "Фаг, севший на уже заражённую клетку, не может впустить свою ДНК и теряется. Выключено — упрощённая классическая модель: встреча фага с заражённой клеткой не уменьшает число свободных фагов (сигнал для торможения лизиса при этом сохраняется)." },
+    { "id": "resistanceMutations", "label": "Мутации устойчивости", "value": true,
+      "description": "При делении чувствительных клеток спонтанно возникают устойчивые мутанты OmpC⁻." },
+    { "id": "rMutations", "label": "r-мутации фага", "value": true,
+      "description": "При размножении фага дикого типа спонтанно возникают r-мутанты." },
+    { "id": "substrateDepletion", "label": "Истощение субстрата", "value": true,
+      "description": "Клетки потребляют субстрат, и рост останавливается, когда он кончается. Выключено — субстрат не расходуется, питания всегда достаточно." },
+    { "id": "phageDecay", "label": "Распад фага", "value": true,
+      "description": "Свободные фаги постепенно теряют инфекционность." },
+    { "id": "hostPhysiology", "label": "Зависимость фага от физиологии хозяина", "value": true,
+      "description": "В голодающих клетках латентный период растёт, а урожай падает. Выключено — фаг развивается одинаково в любой клетке." }
+  ]
+}
